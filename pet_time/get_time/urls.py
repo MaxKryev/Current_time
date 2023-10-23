@@ -1,6 +1,6 @@
 from django.urls import path
-from .views import CurrentTimeView
+from .views import RemoteTimeView
 
 urlpatterns = [
-    path('current_time/', CurrentTimeView.get, name='current_time'),
+    path('remote_time/', RemoteTimeView.as_view(), name='remote_time'),
 ]

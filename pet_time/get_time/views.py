@@ -1,16 +1,19 @@
 import requests
-from django.http import JsonResponse
-from django.utils.timezone import localtime
+from rest_framework.response import Response
 from rest_framework.views import APIView
+from rest_framework import status
+from django.http import HttpResponse
 
-# Create your views here.
+url_template = 'http://worldtimeapi.org/api/ip/'
 
 
-class CurrentTimeView(APIView):
+class RemoteTimeView(APIView):
     def get(self, request):
-        response = requests.get('http://worldtimeapi.org/api/ip')
-        if response.status_code == 200:
-            current_time = response.json()['current_time']
-            return JsonResponse({"current_time": current_time})
-        else:
-            return JsonResponse({"error": "Failed to get the current time from the API"}, status=500)
+        client_ip = request.GET.get('ip_adress')
+        response = requests.get(url=url_template+client_ip)
+        if response.status_code == status.HTTP_200_OK:
+            data = response.json()
+            datetime = data.get('datetime')
+            return Response({'datetime': datetime}, status=status.HTTP_200_OK)
+        return Response({'message': 'Ебаное блядство'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
